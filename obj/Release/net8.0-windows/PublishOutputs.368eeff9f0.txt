@@ -1,0 +1,5 @@
+C:\Users\Maximo\Desktop\Facu\5to año\Teoria de la computabilidad\Ejecutable\AnalizadorLexico.exe
+C:\Users\Maximo\Desktop\Facu\5to año\Teoria de la computabilidad\Ejecutable\AnalizadorLexico.dll
+C:\Users\Maximo\Desktop\Facu\5to año\Teoria de la computabilidad\Ejecutable\AnalizadorLexico.deps.json
+C:\Users\Maximo\Desktop\Facu\5to año\Teoria de la computabilidad\Ejecutable\AnalizadorLexico.runtimeconfig.json
+C:\Users\Maximo\Desktop\Facu\5to año\Teoria de la computabilidad\Ejecutable\AnalizadorLexico.pdb

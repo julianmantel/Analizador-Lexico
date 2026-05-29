@@ -1,0 +1,41 @@
+<Application x:Class="AnalizadorLexico.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Colores globales -->
+            <SolidColorBrush x:Key="BackgroundMain" Color="#F5F5F3"/>
+            <SolidColorBrush x:Key="BackgroundPanel" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="BackgroundToolbar" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="BackgroundStatus" Color="#2C2C2A"/>
+            <SolidColorBrush x:Key="ForegroundMain" Color="#2C2C2A"/>
+            <SolidColorBrush x:Key="ForegroundLight" Color="#8C8C85"/>
+            <SolidColorBrush x:Key="BorderColor" Color="#DADAD8"/>
+            <SolidColorBrush x:Key="AccentPurple" Color="#534AB7"/>
+            <SolidColorBrush x:Key="AccentGreen" Color="#0F6E56"/>
+            <SolidColorBrush x:Key="AccentError" Color="#E24B4A"/>
+            <SolidColorBrush x:Key="AccentOrange" Color="#BA7517"/>
+
+            <!-- Estilo de botón -->
+            <Style x:Key="BotonesEstilo" TargetType="Button">
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontSize" Value="9"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="3"
+                                    Padding="12,6">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
