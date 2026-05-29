@@ -127,10 +127,14 @@ namespace AnalizadorLexico
                 return new Token(TipoToken.ConstanteNumerica, sb.ToString(), l, c);
             }
 
-            if (char.IsLetter(ch) || ch == '_')
+            if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_')
             {
                 var sb = new StringBuilder();
-                while (_pos < _src.Length && (char.IsLetterOrDigit(Cur()) || Cur() == '_'))
+                while (_pos < _src.Length && (
+                    (Cur() >= 'a' && Cur() <= 'z') ||
+                    (Cur() >= 'A' && Cur() <= 'Z') ||
+                    (Cur() >= '0' && Cur() <= '9') ||
+                    Cur() == '_'))
                 {
                     sb.Append(Cur());
                     Adv();
