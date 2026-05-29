@@ -113,7 +113,7 @@
                         <TextBlock Text="  Código fuente" FontSize="11" Foreground="{StaticResource ForegroundLight}" VerticalAlignment="Center"/>
                     </Border>
                     <RichTextBox x:Name="rtbCodigo" Grid.Row="1"
-                                 FontFamily="Consolas" FontSize="13"
+                              FontFamily="Consolas" FontSize="20"
                                  Background="#FCFCFB" Foreground="#2C2C2A"
                                  AcceptsTab="True" AcceptsReturn="True"
                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
@@ -148,7 +148,7 @@
                               RowBackground="White"
                               AlternatingRowBackground="#FAFAFA"
                               BorderThickness="0"
-                              FontFamily="Consolas" FontSize="12"
+                                 FontFamily="Consolas" FontSize="20"
                               HeadersVisibility="Column">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="#" Width="50" Binding="{Binding Numero}" IsReadOnly="True">
@@ -167,22 +167,27 @@
                                         <Setter Property="Background" Value="#2C2C2A"/>
                                         <Setter Property="Foreground" Value="White"/>
                                         <Setter Property="FontWeight" Value="SemiBold"/>
-                                        <Setter Property="Padding" Value="10,6"/>
+                                        <Setter Property="Padding" Value="6,4"/>
                                     </Style>
                                 </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Padding" Value="4,2"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTemplateColumn Header="Tipo" Width="180">
+                            <DataGridTemplateColumn Header="Tipo" Width="*">
                                 <DataGridTemplateColumn.HeaderStyle>
                                     <Style TargetType="DataGridColumnHeader">
                                         <Setter Property="Background" Value="#2C2C2A"/>
                                         <Setter Property="Foreground" Value="White"/>
                                         <Setter Property="FontWeight" Value="SemiBold"/>
-                                        <Setter Property="Padding" Value="10,6"/>
+                                        <Setter Property="Padding" Value="6,4"/>
                                     </Style>
                                 </DataGridTemplateColumn.HeaderStyle>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Tipo}" Foreground="{Binding TipoColor}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Tipo}" Foreground="{Binding TipoColor}" FontWeight="SemiBold" Padding="4,2" TextWrapping="Wrap"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

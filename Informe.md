@@ -23,19 +23,19 @@ Se define un lenguaje de programación imperativo de propósito general, orienta
 | Característica | Descripción |
 |---|---|
 | Tipado | Débilmente tipado (solo `bool` explícito) |
-| Sintaxis | Llaves `{}` para bloques, `;` como terminador |
+| Sintaxis | Llaves `{}` para bloques, `;` como terminador, `,` como separador de parámetros |
 | Comentarios | No soportados en esta versión |
-| Identificadores | Letras, dígitos y guion bajo; no pueden empezar con dígito |
+| Identificadores | Solo ASCII (`a-z`, `A-Z`, `0-9`, `_`); no pueden empezar con dígito |
 | Casesensitive | Sí (`if` ≠ `IF`) |
 
-### alfabeto del lenguaje
+### Alfabeto del lenguaje
 
-El alfabeto de entrada está compuesto por los caracteres ASCII imprimibles, incluyendo:
+El alfabeto de entrada está compuesto por caracteres ASCII, incluyendo:
 
 - Letras `a-z`, `A-Z`
 - Dígitos `0-9`
-- Símbolos: `+ - * / ^ = < > ! & | ( ) { } ; " .`
-- Espacio, tabulación (`\t`), salto de línea (`\n`), retorno de carro (`\r`)
+- Símbolos: `+ - * / ^ = < > ! & | ( ) { } ; , " . _`
+- Espacio, tabulación (`\t`), salto de línea (`\n`)
 
 ---
 
@@ -44,15 +44,15 @@ El alfabeto de entrada está compuesto por los caracteres ASCII imprimibles, inc
 | # | Token | Descripción | Ejemplo |
 |---|---|---|---|
 | 1 | Palabra reservada | Palabras con significado propio en el lenguaje | `if`, `else`, `const`, `var`, `bool`, `true`, `false`, `print`, `void`, `return`, `public` |
-| 2 | Identificador | Nombres definidos por el usuario | `x`, `resultado`, `_contador`, `calcular` |
-| 3 | Constante numérica | Valores numéricos enteros o decimales | `10`, `3.14`, `0`, `100` |
-| 4 | Cadena | Texto literal delimitado por comillas dobles | `"Hola mundo"`, `""` |
+| 2 | Identificador | Nombres definidos por el usuario (solo ASCII) | `x`, `miVar`, `contador`, `miFuncion` |
+| 3 | Constante numérica | Valores numéricos enteros o decimales | `1`, `2.5`, `10.0` |
+| 4 | Cadena | Texto literal delimitado por comillas dobles | `"Hola"`, `""` |
 | 5 | Operador aritmético | Operaciones matemáticas | `+`, `-`, `*`, `/`, `^` |
 | 6 | Operador relacional | Comparaciones entre valores | `==`, `!=`, `<`, `>`, `<=`, `>=` |
-| 7 | Operador lógico | Operaciones booleanas | `&&`, `\|\|`, `!` |
+| 7 | Operador lógico | Condición booleana | `&&`, `\|\|`, `!` |
 | 8 | Operador asignación | Asignación de valores | `=` |
-| 9 | Símbolo especial | Delimitadores y separadores | `{`, `}`, `(`, `)`, `;` |
-| 10 | Blanco | Espacios en blanco (se omiten en la tabla) | espacio, `\t`, `\n`, `\r` |
+| 9 | Símbolo especial | Delimitadores y separadores | `{`, `}`, `(`, `)`, `;`, `,` |
+| 10 | Blanco | Espacios en blanco | espacio, `\t`, `\n` |
 | 11 | Error léxico | Caracteres no reconocidos por el lenguaje | `@`, `#`, `$` |
 
 ---
@@ -61,13 +61,13 @@ El alfabeto de entrada está compuesto por los caracteres ASCII imprimibles, inc
 
 Cada clase léxica se define formalmente mediante una expresión regular sobre el alfabeto del lenguaje.
 
-### 3.1. Blanco
+###3.1. Blanco
 
 ```
-Blanco = [ \t\n\r]+
+Blanco = [ \t\n]
 ```
 
-Representa uno o más caracteres de espacio en blanco. Se reconocen pero se omiten de la tabla de tokens.
+Cada carácter de espacio en blanco se reconoce como un token Blanco individual. Se reconocen y se incluyen en la tabla de tokens.
 
 ### 3.2. Cadena
 
@@ -83,7 +83,7 @@ Una cadena comienza y termina con comilla doble (`"`). Puede contener cualquier 
 ConstanteNumerica = [0-9]+ ( \. [0-9]+ )?
 ```
 
-Una o más cifras decimales, con una parte decimal opcional separada por punto. Ejemplos: `10`, `3.14`, `0`.
+Una o más cifras decimales, con una parte decimal opcional separada por punto. Ejemplos: `1`, `2.5`, `10.0`.
 
 ### 3.4. Identificador
 
@@ -91,7 +91,7 @@ Una o más cifras decimales, con una parte decimal opcional separada por punto. 
 Identificador = [a-zA-Z_] [a-zA-Z0-9_]*
 ```
 
-Comienza con una letra o guion bajo, seguido de cero o más letras, dígitos o guiones bajos.
+Comienza con una letra (`a-z`, `A-Z`) o guion bajo (`_`), seguido de cero o más letras, dígitos o guiones bajos. Solo se aceptan caracteres ASCII.
 
 ### 3.5. Palabra reservada
 
@@ -136,10 +136,10 @@ Los cinco operadores aritméticos básicos, incluyendo potencia (`^`).
 ### 3.10. Símbolo especial
 
 ```
-SimboloEspecial = { | } | ( | ) | ;
+SimboloEspecial = { | } | ( | ) | ; | ,
 ```
 
-Delimitadores de bloques, paréntesis de agrupación y terminador de sentencia.
+Delimitadores de bloques, paréntesis de agrupación, terminador de sentencia y separador de parámetros.
 
 ### 3.11. Error léxico
 
@@ -161,11 +161,13 @@ El analizador léxico se implementa como un **escáner de mano** (hand-written s
 
 La clase `Lexer` encapsula toda la lógica de tokenización. Recibe el código fuente como un `string` y produce una lista de objetos `Token`.
 
+**Preprocesamiento:** Antes del análisis, se eliminan los caracteres de retorno de carro (`\r`) del código fuente, ya que el `RichTextBox` de WPF utiliza `\r\n` para los saltos de línea.
+
 **Atributos internos:**
 
 | Atributo | Tipo | Descripción |
 |---|---|---|
-| `_src` | `string` | Código fuente completo |
+| `_src` | `string` | Código fuente completo (sin `\r`) |
 | `_pos` | `int` | Posición actual de lectura en `_src` |
 | `_linea` | `int` | Línea actual (inicia en 1) |
 | `_col` | `int` | Columna actual (inicia en 1) |
@@ -186,17 +188,17 @@ La clase `Lexer` encapsula toda la lógica de tokenización. Recibe el código f
 El método `Siguiente()` implementa la siguiente lógica de decisión:
 
 ```
-1. Si el carácter actual es whitespace → token Blanco
+1. Si el carácter actual es whitespace → token Blanco (un carácter a la vez)
 2. Si el carácter actual es '"' → buscar cierre de cadena → token Cadena o Error
-3. Si el carácter actual es dígito → leer número (con decimales opcionales) → token ConstanteNumerica
-4. Si el carácter actual es letra o '_' → leer identificar → resolver si es reservada
+3. Si el carácter actual es dígito (0-9) → leer número (con decimales opcionales) → token ConstanteNumerica
+4. Si el carácter actual es letra ASCII (a-z, A-Z) o '_' → leer identificador → resolver si es reservada
 5. Si coincide con operador relacional de 2 chars (==, !=, <=, >=) → token OperadorRelacional
 6. Si coincide con operador lógico de 2 chars (&&, ||) → token OperadorLogico
 7. Si es <, > → token OperadorRelacional
 8. Si es ! → token OperadorLogico
 9. Si es = → token OperadorAsignacion
 10. Si es +, -, *, /, ^ → token OperadorAritmetico
-11. Si es {, }, (, ), ; → token SimboloEspecial
+11. Si es {, }, (, ), ;, , → token SimboloEspecial
 12. Cualquier otro → token ErrorLexico
 ```
 
@@ -214,12 +216,12 @@ public class Token
 }
 ```
 
-### 4.5. Interfaz gráfica (WPF)
+###4.5. Interfaz gráfica (WPF)
 
 La aplicación WPF presenta:
 
-- **Editor de código fuente** (RichTextBox) — entrada del usuario
-- **Tabla de tokens** (DataGrid) — muestra los tokens reconocidos con columnas: #, Lexema, Tipo (con color), Línea, Columna
+- **Editor de código fuente** (RichTextBox) — entrada del usuario, con interlineado corregido
+- **Tabla de tokens** (DataGrid) — muestra todos los tokens incluyendo Blancos, con columnas: #, Lexema, Tipo (con color por tipo de token)
 - **Estadísticas** — total de tokens, palabras reservadas, identificadores y errores
 - **Barra de estado** — indica si hubo errores o el análisis fue exitoso
 
@@ -238,23 +240,29 @@ if (x == 10) {
 
 **Tokens esperados:**
 
-| # | Lexema | Tipo | Línea | Columna |
-|---|---|---|---|---|
-| 1 | `if` | Palabra reservada | 1 | 1 |
-| 2 | `(` | Símbolo especial | 1 | 4 |
-| 3 | `x` | Identificador | 1 | 5 |
-| 4 | `==` | Op. relacional | 1 | 7 |
-| 5 | `10` | Constante numérica | 1 | 10 |
-| 6 | `)` | Símbolo especial | 1 | 12 |
-| 7 | `{` | Símbolo especial | 1 | 14 |
-| 8 | `print` | Palabra reservada | 2 | 3 |
-| 9 | `(` | Símbolo especial | 2 | 8 |
-| 10 | `"Hola mundo"` | Cadena | 2 | 9 |
-| 11 | `)` | Símbolo especial | 2 | 21 |
-| 12 | `;` | Símbolo especial | 2 | 22 |
-| 13 | `}` | Símbolo especial | 3 | 1 |
+| # | Lexema | Tipo |
+|---|---|---|
+| 1 | `if` | Palabra reservada |
+| 2 | `(` | Símbolo especial |
+| 3 | `x` | Identificador |
+| 4 | ` ` | Blanco |
+| 5 | `==` | Op. relacional |
+| 6 | ` ` | Blanco |
+| 7 | `10` | Constante numérica |
+| 8 | `)` | Símbolo especial |
+| 9 | ` ` | Blanco |
+| 10 | `{` | Símbolo especial |
+| 11 | `\n` | Blanco |
+| 12 | `  ` | Blanco |
+| 13 | `print` | Palabra reservada |
+| 14 | `(` | Símbolo especial |
+| 15 | `"Hola mundo"` | Cadena |
+| 16 | `)` | Símbolo especial |
+| 17 | `;` | Símbolo especial |
+| 18 | `\n` | Blanco |
+| 19 | `}` | Símbolo especial |
 
-**Resultado esperado:** 13 tokens, 0 errores, 2 palabras reservadas (`if`, `print`), 1 identificador (`x`).
+**Resultado esperado:** 19 tokens, 0 errores, 2 palabras reservadas (`if`, `print`), 1 identificador (`x`).
 
 ---
 
@@ -272,44 +280,73 @@ public void calcular(a, b) {
 
 **Tokens esperados:**
 
-| # | Lexema | Tipo | Línea | Columna |
-|---|---|---|---|---|
-| 1 | `public` | Palabra reservada | 1 | 1 |
-| 2 | `void` | Palabra reservada | 1 | 8 |
-| 3 | `calcular` | Identificador | 1 | 13 |
-| 4 | `(` | Símbolo especial | 1 | 21 |
-| 5 | `a` | Identificador | 1 | 22 |
-| 6 | `,` | Símbolo especial | 1 | 23 |
-| 7 | `b` | Identificador | 1 | 25 |
-| 8 | `)` | Símbolo especial | 1 | 26 |
-| 9 | `{` | Símbolo especial | 1 | 28 |
-| 10 | `const` | Palabra reservada | 2 | 3 |
-| 11 | `resultado` | Identificador | 2 | 9 |
-| 12 | `=` | Op. asignación | 2 | 20 |
-| 13 | `a` | Identificador | 2 | 22 |
-| 14 | `+` | Op. aritmético | 2 | 24 |
-| 15 | `b` | Identificador | 2 | 26 |
-| 16 | `*` | Op. aritmético | 2 | 28 |
-| 17 | `2.5` | Constante numérica | 2 | 30 |
-| 18 | `;` | Símbolo especial | 2 | 33 |
-| 19 | `if` | Palabra reservada | 3 | 3 |
-| 20 | `(` | Símbolo especial | 3 | 6 |
-| 21 | `resultado` | Identificador | 3 | 7 |
-| 22 | `>=` | Op. relacional | 3 | 17 |
-| 23 | `100` | Constante numérica | 3 | 20 |
-| 24 | `\|\|` | Op. lógico | 3 | 24 |
-| 25 | `b` | Identificador | 3 | 27 |
-| 26 | `!=` | Op. relacional | 3 | 29 |
-| 27 | `0` | Constante numérica | 3 | 32 |
-| 28 | `)` | Símbolo especial | 3 | 33 |
-| 29 | `{` | Símbolo especial | 3 | 35 |
-| 30 | `return` | Palabra reservada | 4 | 5 |
-| 31 | `resultado` | Identificador | 4 | 12 |
-| 32 | `;` | Símbolo especial | 4 | 21 |
-| 33 | `}` | Símbolo especial | 5 | 3 |
-| 34 | `}` | Símbolo especial | 6 | 1 |
+| # | Lexema | Tipo |
+|---|---|---|
+| 1 | `public` | Palabra reservada |
+| 2 | ` ` | Blanco |
+| 3 | `void` | Palabra reservada |
+| 4 | ` ` | Blanco |
+| 5 | `calcular` | Identificador |
+| 6 | `(` | Símbolo especial |
+| 7 | `a` | Identificador |
+| 8 | `,` | Símbolo especial |
+| 9 | ` ` | Blanco |
+| 10 | `b` | Identificador |
+| 11 | `)` | Símbolo especial |
+| 12 | ` ` | Blanco |
+| 13 | `{` | Símbolo especial |
+| 14 | `\n` | Blanco |
+| 15 | `  ` | Blanco |
+| 16 | `const` | Palabra reservada |
+| 17 | ` ` | Blanco |
+| 18 | `resultado` | Identificador |
+| 19 | ` ` | Blanco |
+| 20 | `=` | Op. asignación |
+| 21 | ` ` | Blanco |
+| 22 | `a` | Identificador |
+| 23 | ` ` | Blanco |
+| 24 | `+` | Op. aritmético |
+| 25 | ` ` | Blanco |
+| 26 | `b` | Identificador |
+| 27 | ` ` | Blanco |
+| 28 | `*` | Op. aritmético |
+| 29 | ` ` | Blanco |
+| 30 | `2.5` | Constante numérica |
+| 31 | `;` | Símbolo especial |
+| 32 | `\n` | Blanco |
+| 33 | `  ` | Blanco |
+| 34 | `if` | Palabra reservada |
+| 35 | `(` | Símbolo especial |
+| 36 | `resultado` | Identificador |
+| 37 | ` ` | Blanco |
+| 38 | `>=` | Op. relacional |
+| 39 | ` ` | Blanco |
+| 40 | `100` | Constante numérica |
+| 41 | ` ` | Blanco |
+| 42 | `\|\|` | Op. lógico |
+| 43 | ` ` | Blanco |
+| 44 | `b` | Identificador |
+| 45 | ` ` | Blanco |
+| 46 | `!=` | Op. relacional |
+| 47 | ` ` | Blanco |
+| 48 | `0` | Constante numérica |
+| 49 | `)` | Símbolo especial |
+| 50 | ` ` | Blanco |
+| 51 | `{` | Símbolo especial |
+| 52 | ` ` | Blanco |
+| 53 | `\n` | Blanco |
+| 54 | `    ` | Blanco |
+| 55 | `return` | Palabra reservada |
+| 56 | ` ` | Blanco |
+| 57 | `resultado` | Identificador |
+| 58 | `;` | Símbolo especial |
+| 59 | `\n` | Blanco |
+| 60 | `  ` | Blanco |
+| 61 | `}` | Símbolo especial |
+| 62 | `\n` | Blanco |
+| 63 | `}` | Símbolo especial |
 
-**Resultado esperado:** 34 tokens, 0 errores, 5 palabras reservadas (`public`, `void`, `const`, `if`, `return`), 8 identificadores.
+**Resultado esperado:** 63 tokens, 0 errores, 5 palabras reservadas (`public`, `void`, `const`, `if`, `return`), 8 identificadores.
 
 ---
 
@@ -325,38 +362,57 @@ print(x + $);
 
 **Tokens esperados:**
 
-| # | Lexema | Tipo | Línea | Columna |
-|---|---|---|---|---|
-| 1 | `var` | Palabra reservada | 1 | 1 |
-| 2 | `x` | Identificador | 1 | 5 |
-| 3 | `=` | Op. asignación | 1 | 7 |
-| 4 | `10` | Constante numérica | 1 | 9 |
-| 5 | `;` | Símbolo especial | 1 | 11 |
-| 6 | `const` | Palabra reservada | 2 | 1 |
-| 7 | `y` | Identificador | 2 | 7 |
-| 8 | `=` | Op. asignación | 2 | 9 |
-| 9 | `@` | **Error léxico** | 2 | 11 |
-| 10 | `precio` | Identificador | 2 | 12 |
-| 11 | `*` | Op. aritmético | 2 | 19 |
-| 12 | `x` | Identificador | 2 | 21 |
-| 13 | `;` | Símbolo especial | 2 | 22 |
-| 14 | `bool` | Palabra reservada | 3 | 1 |
-| 15 | `ok` | Identificador | 3 | 6 |
-| 16 | `=` | Op. asignación | 3 | 9 |
-| 17 | `true` | Palabra reservada | 3 | 11 |
-| 18 | `&&` | Op. lógico | 3 | 16 |
-| 19 | `#` | **Error léxico** | 3 | 19 |
-| 20 | `flag` | Identificador | 3 | 20 |
-| 21 | `;` | Símbolo especial | 3 | 24 |
-| 22 | `print` | Palabra reservada | 4 | 1 |
-| 23 | `(` | Símbolo especial | 4 | 6 |
-| 24 | `x` | Identificador | 4 | 7 |
-| 25 | `+` | Op. aritmético | 4 | 9 |
-| 26 | `$` | **Error léxico** | 4 | 11 |
-| 27 | `)` | Símbolo especial | 4 | 12 |
-| 28 | `;` | Símbolo especial | 4 | 13 |
+| # | Lexema | Tipo |
+|---|---|---|
+| 1 | `var` | Palabra reservada |
+| 2 | ` ` | Blanco |
+| 3 | `x` | Identificador |
+| 4 | ` ` | Blanco |
+| 5 | `=` | Op. asignación |
+| 6 | ` ` | Blanco |
+| 7 | `10` | Constante numérica |
+| 8 | `;` | Símbolo especial |
+| 9 | `\n` | Blanco |
+| 10 | `const` | Palabra reservada |
+| 11 | ` ` | Blanco |
+| 12 | `y` | Identificador |
+| 13 | ` ` | Blanco |
+| 14 | `=` | Op. asignación |
+| 15 | ` ` | Blanco |
+| 16 | `@` | **Error léxico** |
+| 17 | `precio` | Identificador |
+| 18 | ` ` | Blanco |
+| 19 | `*` | Op. aritmético |
+| 20 | ` ` | Blanco |
+| 21 | `x` | Identificador |
+| 22 | `;` | Símbolo especial |
+| 23 | `\n` | Blanco |
+| 24 | `bool` | Palabra reservada |
+| 25 | ` ` | Blanco |
+| 26 | `ok` | Identificador |
+| 27 | ` ` | Blanco |
+| 28 | `=` | Op. asignación |
+| 29 | ` ` | Blanco |
+| 30 | `true` | Palabra reservada |
+| 31 | ` ` | Blanco |
+| 32 | `&&` | Op. lógico |
+| 33 | ` ` | Blanco |
+| 34 | `#` | **Error léxico** |
+| 35 | `flag` | Identificador |
+| 36 | `;` | Símbolo especial |
+| 37 | `\n` | Blanco |
+| 38 | `print` | Palabra reservada |
+| 39 | `(` | Símbolo especial |
+| 40 | `x` | Identificador |
+| 41 | ` ` | Blanco |
+| 42 | `+` | Op. aritmético |
+| 43 | ` ` | Blanco |
+| 44 | `$` | **Error léxico** |
+| 45 | `)` | Símbolo especial |
+| 46 | `;` | Símbolo especial |
+| 47 | `\n` | Blanco |
 
-**Resultado esperado:** 28 tokens, **3 errores léxicos** (`@`, `#`, `$`), 4 palabras reservadas (`var`, `const`, `bool`, `true`), 6 identificadores.
+**Resultado esperado:** 47 tokens, **3 errores léxicos** (`@`, `#`, `$`), 4 palabras reservadas (`var`, `const`, `bool`, `true`), 6 identificadores.
 
 ---
 
@@ -364,4 +420,4 @@ print(x + $);
 
 El analizador léxico implementado demuestra que es posible construir un scanner funcional sin herramientas de generación automática, utilizando únicamente un enfoque de inspección secuencial de caracteres. Las expresiones regulares formalizadas en la sección 3 corresponden directamente a la lógica de decisión implementada en el método `Siguiente()` de la clase `Lexer`.
 
-El diseño separa claramente las responsabilidades: el `Lexer` se encarga exclusivamente del análisis léxico, mientras que la capa de presentación (WPF) maneja la interacción con el usuario y la visualización de resultados.
+El diseño separa claramente las responsabilidades: el `Lexer` se encarga exclusivamente del análisis léxico, mientras que la capa de presentación (WPF) maneja la interacción con el usuario y la visualización de resultados. La tabla de tokens refleja fielmente el flujo de caracteres del código fuente, incluyendo los blancos como tokens individuales, lo que permite observar la estructura exacta del código tal como la interpreta el lexer.
