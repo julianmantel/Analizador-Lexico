@@ -53,7 +53,6 @@ El alfabeto de entrada está compuesto por caracteres ASCII, incluyendo:
 | 8 | Operador asignación | Asignación de valores | `=` |
 | 9 | Símbolo especial | Delimitadores y separadores | `{`, `}`, `(`, `)`, `;`, `,` |
 | 10 | Blanco | Espacios en blanco | espacio, `\t`, `\n` |
-| 11 | Error léxico | Caracteres no reconocidos por el lenguaje | `@`, `#`, `$` |
 
 ---
 
