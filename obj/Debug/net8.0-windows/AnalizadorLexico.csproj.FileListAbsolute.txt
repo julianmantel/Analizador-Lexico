@@ -18,3 +18,24 @@ C:\Users\Maximo\Desktop\Facu\5to año\Teoria de la computabilidad\AnalizadorLexi
 C:\Users\Maximo\Desktop\Facu\5to año\Teoria de la computabilidad\AnalizadorLexico\obj\Debug\net8.0-windows\App.g.cs
 C:\Users\Maximo\Desktop\Facu\5to año\Teoria de la computabilidad\AnalizadorLexico\obj\Debug\net8.0-windows\AnalizadorLexico_MarkupCompile.cache
 C:\Users\Maximo\Desktop\Facu\5to año\Teoria de la computabilidad\AnalizadorLexico\obj\Debug\net8.0-windows\AnalizadorLexico.g.resources
+D:\Programacion\Analizador-Lexico\bin\Debug\net8.0-windows\AnalizadorLexico.exe
+D:\Programacion\Analizador-Lexico\bin\Debug\net8.0-windows\AnalizadorLexico.deps.json
+D:\Programacion\Analizador-Lexico\bin\Debug\net8.0-windows\AnalizadorLexico.runtimeconfig.json
+D:\Programacion\Analizador-Lexico\bin\Debug\net8.0-windows\AnalizadorLexico.dll
+D:\Programacion\Analizador-Lexico\bin\Debug\net8.0-windows\AnalizadorLexico.pdb
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\MainWindow.baml
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\App.baml
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\MainWindow.g.cs
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\App.g.cs
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\AnalizadorLexico_MarkupCompile.cache
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\AnalizadorLexico.g.resources
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\AnalizadorLexico.GeneratedMSBuildEditorConfig.editorconfig
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\AnalizadorLexico.AssemblyInfoInputs.cache
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\AnalizadorLexico.AssemblyInfo.cs
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\AnalizadorLexico.csproj.CoreCompileInputs.cache
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\AnalizadorLexico.sourcelink.json
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\AnalizadorLexico.dll
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\refint\AnalizadorLexico.dll
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\AnalizadorLexico.pdb
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\AnalizadorLexico.genruntimeconfig.cache
+D:\Programacion\Analizador-Lexico\obj\Debug\net8.0-windows\ref\AnalizadorLexico.dll

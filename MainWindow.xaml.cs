@@ -221,7 +221,7 @@ namespace AnalizadorLexico
         private static readonly string[] Ejemplos =
         {
             "if (x == 10) {\n  print(\"Hola mundo\");\n}",
-            "public void calcular(a, b) {\n  const resultado = a + b * 2.5;\n  if (resultado >= 100 || b != 0) {\n    return resultado;\n  }\n}",
+            "public void calcular(a, b) {\n  const resultado = 2.5;\n  if (resultado >= 100 || b != 0) {\n    return resultado;\n  }\n}",
             "var x = 10;\nconst y = @precio * x;\nbool ok = true && #flag;\nprint(x + $);"
         };
 
